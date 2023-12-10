@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import ButtonGroup from "./components/buttonGroup";
 import { RootState, useAppDispatch, useAppSelector } from "./redux/store";
 import { setBroadcastSelection } from "./redux/pointSlice";
-import socket from "./webSocket";
+import { listenPointSelectionBroadcast } from "./webSocket";
 
 const App = () => {
   const { userSelection, broadcastSelection } = useAppSelector(
@@ -12,9 +12,11 @@ const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    socket.on("receive_point", (data) => {
-      dispatch(setBroadcastSelection(data.point));
-    });
+    const listen = async () => {
+      const point = (await listenPointSelectionBroadcast()) as number;
+      dispatch(setBroadcastSelection(point));
+    };
+    listen();
   }, [broadcastSelection, dispatch]);
 
   return (

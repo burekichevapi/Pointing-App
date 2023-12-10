@@ -8,4 +8,10 @@ export const emitPointSelection = (point: number) => {
   });
 };
 
-export default socket;
+export const listenPointSelectionBroadcast = () => {
+  return new Promise((resolve) => {
+    socket.on("receive_point", (data) => {
+      resolve(data.point);
+    });
+  });
+};

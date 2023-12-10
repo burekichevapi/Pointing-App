@@ -26,7 +26,6 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
             key={`${uuidV4()}`}
             value={btn}
             onClick={() => handleButtonClick(btn)}
-            // Apply a "selected" class if the button is currently selected
             className={btn === userSelection ? "selected" : ""}
           >
             {btn}
