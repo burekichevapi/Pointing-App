@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import pointReducer from "./pointSlice";
+import point from "./pointSlice";
+import user from "./userSlice";
 
 const store = configureStore({
   reducer: {
-    point: pointReducer
+    point,
+    user
   }
 });
 

@@ -1,17 +1,24 @@
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3000", { transports: ["websocket"] });
+const SOCKET = io("http://localhost:3000", { transports: ["websocket"] });
 
-export const emitPointSelection = (point: number) => {
-  socket.emit("send_point", {
-    point
-  });
+export interface SendPointSelection {
+  roomId: string;
+  point: number;
+}
+
+export const emitPointSelection = (pointSelection: SendPointSelection) => {
+  SOCKET.emit("send_point", pointSelection);
 };
 
 export const listenPointSelectionBroadcast = () => {
   return new Promise((resolve) => {
-    socket.on("receive_point", (data) => {
+    SOCKET.on("receive_point", (data) => {
       resolve(data.point);
     });
   });
+};
+
+export const joinNewRoom = (roomId: string) => {
+  SOCKET.emit("join_room", roomId);
 };

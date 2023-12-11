@@ -18,6 +18,10 @@ const socketServer = new Server(httpServer, {
 socketServer.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
+  socket.on("join_room", (data) => {
+    socket.join(data);
+  });
+
   socket.on("send_point", (data) => {
     console.log(data);
     socket.broadcast.emit("receive_point", data);

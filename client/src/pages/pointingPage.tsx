@@ -5,10 +5,10 @@ import { setBroadcastSelection } from "../redux/pointSlice";
 import { listenPointSelectionBroadcast } from "../webSocket";
 
 const PointingPage = () => {
+  const dispatch = useAppDispatch();
   const { userSelection, broadcastSelection } = useAppSelector(
     (state: RootState) => state.point
   );
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const listen = async () => {
