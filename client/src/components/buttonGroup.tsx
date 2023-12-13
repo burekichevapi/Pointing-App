@@ -1,32 +1,33 @@
-import { v4 as uuidV4 } from "uuid";
 import "./button.css";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
-import { setUserSelection } from "../redux/pointSlice";
-import { emitPointSelection } from "../webSocket";
+import { emitPoint } from "../webSocket";
+import { setPoint } from "../redux/userSlice";
+import { useEffect } from "react";
 
 interface ButtonGroupProps {
   buttons: Array<number>;
 }
 
 const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
-  const { userSelection } = useAppSelector((state: RootState) => state.point);
+  const user = useAppSelector((state: RootState) => state.user);
   const dispatch = useAppDispatch();
 
-  const handleButtonClick = (point: number) => {
-    dispatch(setUserSelection(point));
-    emitPointSelection(point);
-  };
+  useEffect(() => {
+    emitPoint(user);
+  }, [user, user.point]);
+
+  const handleButtonClick = (point: number) => dispatch(setPoint(point));
 
   return (
     <div>
       <h2>Point Options</h2>
       <div>
-        {buttons.map((btn) => (
+        {buttons.map((btn, index) => (
           <button
-            key={`${uuidV4()}`}
+            key={`${index}`}
             value={btn}
             onClick={() => handleButtonClick(btn)}
-            className={btn === userSelection ? "selected" : ""}
+            className={btn === user.point ? "selected" : ""}
           >
             {btn}
           </button>

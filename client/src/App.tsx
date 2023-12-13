@@ -1,13 +1,13 @@
 import "./App.css";
-import PointingPage from "./pages/pointingPage";
-import PointingStartUpForm from "./pages/pointingStartUpForm";
+import VoteSection from "./pages/voteSection";
+import StartForm from "./pages/startForm";
 
 const App = () => {
   return (
     <>
       <div className="App"></div>
-      <PointingStartUpForm />
-      <PointingPage />
+      <StartForm />
+      <VoteSection />
     </>
   );
 };

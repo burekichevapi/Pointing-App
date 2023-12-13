@@ -1,24 +1,27 @@
 import io from "socket.io-client";
+import User from "./models/user";
 
 const SOCKET = io("http://localhost:3000", { transports: ["websocket"] });
 
-export interface SendPointSelection {
-  roomId: string;
-  point: number;
-}
+export const emitPoint = (user: User) => {
+  if (user.point! <= 0) return;
 
-export const emitPointSelection = (pointSelection: SendPointSelection) => {
-  SOCKET.emit("send_point", pointSelection);
+  SOCKET.emit("send_point", user);
 };
 
-export const listenPointSelectionBroadcast = () => {
+export const listenPointSelectionBroadcast = (): Promise<User[]> => {
   return new Promise((resolve) => {
-    SOCKET.on("receive_point", (data) => {
-      resolve(data.point);
+    SOCKET.on("update_votes", (users: User[]) => {
+      resolve(users);
     });
   });
 };
 
-export const joinNewRoom = (roomId: string) => {
-  SOCKET.emit("join_room", roomId);
+export const createRoom = (roomId: string, user: User) => {
+  console.log(user);
+  SOCKET.emit("create_room", { roomId, user });
+};
+
+export const joinRoom = (user: User) => {
+  SOCKET.emit("join_room", user);
 };

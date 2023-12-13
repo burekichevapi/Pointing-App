@@ -1,27 +1,31 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-type SliceState = { roomId: string; username: string; isObserver: boolean };
+import User from "../models/user";
 
 const userSlice = createSlice({
   name: "user",
   initialState: {
     roomId: "",
     username: "",
-    isObserver: false
-  } as SliceState,
+    isObserver: false,
+    point: 0
+  } as User,
   reducers: {
-    setRoomId: (state: SliceState, action: PayloadAction<string>) => {
+    setRoomId: (state: User, action: PayloadAction<string>) => {
       state.roomId = action.payload;
     },
-    setUsername: (state: SliceState, action: PayloadAction<string>) => {
+    setUsername: (state: User, action: PayloadAction<string>) => {
       state.username = action.payload;
     },
-    toggleIsObserver: (state: SliceState) => {
+    toggleIsObserver: (state: User) => {
       state.isObserver = !state.isObserver;
+    },
+    setPoint: (state: User, action: PayloadAction<number>) => {
+      state.point = action.payload;
     }
   }
 });
 
-export const { setRoomId, setUsername, toggleIsObserver } = userSlice.actions;
+export const { setRoomId, setUsername, toggleIsObserver, setPoint } =
+  userSlice.actions;
 
 export default userSlice.reducer;

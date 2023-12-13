@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import point from "./pointSlice";
 import user from "./userSlice";
+import votes from "./voteSlice";
 
 const store = configureStore({
   reducer: {
-    point,
-    user
+    user,
+    votes
   }
 });
 
