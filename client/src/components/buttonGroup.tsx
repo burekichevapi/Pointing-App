@@ -14,7 +14,7 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
 
   useEffect(() => {
     if (user.point! <= 0) return;
-    SOCKET.emit("send_point", user);
+    SOCKET.emit("send_vote", user);
   }, [user, user.point]);
 
   const handleButtonClick = (point: number) => dispatch(setPoint(point));

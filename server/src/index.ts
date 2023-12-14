@@ -38,7 +38,7 @@ socketServer.on("connection", (socket) => {
     socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
   });
 
-  socket.on("send_point", (user: User) => {
+  socket.on("send_vote", (user: User) => {
     const users = ROOMS.get(user.roomId);
     if (users === null || users === undefined) return;
 
