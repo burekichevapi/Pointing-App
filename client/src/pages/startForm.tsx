@@ -1,13 +1,15 @@
 import { setRoomId, setUsername, toggleIsObserver } from "../redux/userSlice";
 import { useAppSelector, RootState, useAppDispatch } from "../redux/store";
-import { createRoom, joinRoom } from "../webSocket";
+import { SOCKET } from "../webSocket";
 import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { ChangeEvent } from "react";
 import { upsertVote } from "../redux/voteSlice";
+import { useNavigate } from "react-router-dom";
 
 const StartForm = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
 
   const handleCreateRoom = () => {
     if (user.username.trim() === "") {
@@ -19,11 +21,11 @@ const StartForm = () => {
 
     dispatch(setRoomId(roomId));
 
-    createRoom(roomId, user);
-
-    alert(`Room ${roomId} created!`);
-
     dispatch(upsertVote([user]));
+
+    SOCKET.emit("create_room", { roomId, user });
+
+    navigate("/vote");
   };
 
   const handleJoinRoom = () => {
@@ -36,11 +38,11 @@ const StartForm = () => {
       return;
     }
 
-    joinRoom(user);
-
     dispatch(upsertVote([user]));
 
-    alert(`Room ${user.roomId} joined!`);
+    SOCKET.emit("join_room", user);
+
+    navigate("/vote");
   };
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) =>
@@ -69,9 +71,6 @@ const StartForm = () => {
           checked={user.isObserver}
         />
       </label>
-      <div>
-        <label>Current Room: {user.roomId}</label>
-      </div>
       <div>
         <button onClick={handleCreateRoom}>Create</button>
         <button onClick={handleJoinRoom}>Join</button>

@@ -1,6 +1,6 @@
 import "./button.css";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
-import { emitPoint } from "../webSocket";
+import { SOCKET } from "../webSocket";
 import { setPoint } from "../redux/userSlice";
 import { useEffect } from "react";
 
@@ -13,7 +13,8 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    emitPoint(user);
+    if (user.point! <= 0) return;
+    SOCKET.emit("send_point", user);
   }, [user, user.point]);
 
   const handleButtonClick = (point: number) => dispatch(setPoint(point));
@@ -24,7 +25,7 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
       <div>
         {buttons.map((btn, index) => (
           <button
-            key={`${index}`}
+            key={index}
             value={btn}
             onClick={() => handleButtonClick(btn)}
             className={btn === user.point ? "selected" : ""}
