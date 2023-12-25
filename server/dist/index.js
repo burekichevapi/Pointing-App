@@ -15,6 +15,7 @@ const ROOMS = new Map();
 socketServer.on("connection", (socket) => {
     socket.on("create_room", (data) => {
         socket.join(data.roomId);
+        data.user.roomId = data.roomId;
         ROOMS.set(data.roomId, [data.user]);
         console.log("Room created...");
         console.log(ROOMS);
@@ -29,20 +30,21 @@ socketServer.on("connection", (socket) => {
         ROOMS.set(user.roomId, users);
         socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
     });
-    socket.on("send_point", (user) => {
+    socket.on("send_vote", (user) => {
         const users = ROOMS.get(user.roomId);
         if (users === null || users === undefined)
             return;
         const idx = users.findIndex((u) => u.username === user.username);
         users[idx] = user;
         ROOMS.set(user.roomId, users);
-        console.log("Room joined...");
-        console.log(ROOMS);
         socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
     });
     socket.on("reveal_votes", (roomId) => {
         console.log("show votes for room", roomId);
         socket.to(roomId).emit("show_votes");
+    });
+    socket.on("on_load", (roomId) => {
+        socket.to(roomId).emit("update_votes", ROOMS.get(roomId));
     });
 });
 httpServer.listen(3000, () => {

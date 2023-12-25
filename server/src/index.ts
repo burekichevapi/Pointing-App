@@ -21,9 +21,8 @@ const ROOMS = new Map<string, User[]>();
 socketServer.on("connection", (socket) => {
   socket.on("create_room", (data) => {
     socket.join(data.roomId);
+    data.user.roomId = data.roomId;
     ROOMS.set(data.roomId, [data.user]);
-    console.log("Room created...");
-    console.log(ROOMS);
     socket.to(data.roomId).emit("update_votes", ROOMS.get(data.roomId));
   });
 
@@ -47,15 +46,15 @@ socketServer.on("connection", (socket) => {
 
     ROOMS.set(user.roomId, users);
 
-    console.log("Room joined...");
-    console.log(ROOMS);
-
     socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
   });
 
   socket.on("reveal_votes", (roomId: string) => {
-    console.log("show votes for room", roomId);
     socket.to(roomId).emit("show_votes");
+  });
+
+  socket.on("on_load", (roomId: string) => {
+    socket.to(roomId).emit("update_votes", ROOMS.get(roomId));
   });
 });
 

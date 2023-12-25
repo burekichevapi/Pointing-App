@@ -24,7 +24,8 @@ const VoteForm = () => {
   useEffect(() => {
     listenForVotes();
     listenForShowVotes();
-  }, [dispatch, listenForShowVotes, listenForVotes, votes]);
+    SOCKET.emit("on_load", user.roomId);
+  }, [dispatch, listenForShowVotes, listenForVotes, user.roomId, votes]);
 
   const handleOnClickReveal = () => {
     SOCKET.emit("reveal_votes", user.roomId);
@@ -50,8 +51,8 @@ const VoteForm = () => {
           {Array.from(votes).map((voter, index) => {
             return (
               user.username !== voter.username && (
-                <div>
-                  <label key={index}>
+                <div key={index}>
+                  <label>
                     {voter.username}: {revealVotes && voter.point}
                   </label>
                 </div>
