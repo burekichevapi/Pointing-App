@@ -17,9 +17,7 @@ socketServer.on("connection", (socket) => {
         socket.join(data.roomId);
         data.user.roomId = data.roomId;
         ROOMS.set(data.roomId, [data.user]);
-        console.log("Room created...");
-        console.log(ROOMS);
-        socket.to(data.roomId).emit("update_votes", ROOMS.get(data.roomId));
+        socket.to(data.roomId).emit("get_votes", ROOMS.get(data.roomId));
     });
     socket.on("join_room", (user) => {
         socket.join(user.roomId);
@@ -28,7 +26,7 @@ socketServer.on("connection", (socket) => {
             return;
         users.push(user);
         ROOMS.set(user.roomId, users);
-        socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
+        socket.to(user.roomId).emit("get_votes", ROOMS.get(user.roomId));
     });
     socket.on("send_vote", (user) => {
         const users = ROOMS.get(user.roomId);
@@ -37,14 +35,13 @@ socketServer.on("connection", (socket) => {
         const idx = users.findIndex((u) => u.username === user.username);
         users[idx] = user;
         ROOMS.set(user.roomId, users);
-        socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
+        socket.to(user.roomId).emit("get_votes", ROOMS.get(user.roomId));
     });
     socket.on("reveal_votes", (roomId) => {
-        console.log("show votes for room", roomId);
         socket.to(roomId).emit("show_votes");
     });
     socket.on("on_load", (roomId) => {
-        socket.to(roomId).emit("update_votes", ROOMS.get(roomId));
+        socket.to(roomId).emit("get_votes", ROOMS.get(roomId));
     });
 });
 httpServer.listen(3000, () => {

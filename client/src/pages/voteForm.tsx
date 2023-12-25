@@ -12,7 +12,7 @@ const VoteForm = () => {
   const [revealVotes, setRevealVotes] = useState(false);
 
   const listenForVotes = useCallback(async () => {
-    SOCKET.on("update_votes", (users: User[]) => {
+    SOCKET.on("get_votes", (users: User[]) => {
       dispatch(upsertVote(users));
     });
   }, [dispatch]);

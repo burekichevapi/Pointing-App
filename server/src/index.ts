@@ -23,7 +23,7 @@ socketServer.on("connection", (socket) => {
     socket.join(data.roomId);
     data.user.roomId = data.roomId;
     ROOMS.set(data.roomId, [data.user]);
-    socket.to(data.roomId).emit("update_votes", ROOMS.get(data.roomId));
+    socket.to(data.roomId).emit("get_votes", ROOMS.get(data.roomId));
   });
 
   socket.on("join_room", (user: User) => {
@@ -34,7 +34,7 @@ socketServer.on("connection", (socket) => {
     users.push(user);
     ROOMS.set(user.roomId, users);
 
-    socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
+    socket.to(user.roomId).emit("get_votes", ROOMS.get(user.roomId));
   });
 
   socket.on("send_vote", (user: User) => {
@@ -46,7 +46,7 @@ socketServer.on("connection", (socket) => {
 
     ROOMS.set(user.roomId, users);
 
-    socket.to(user.roomId).emit("update_votes", ROOMS.get(user.roomId));
+    socket.to(user.roomId).emit("get_votes", ROOMS.get(user.roomId));
   });
 
   socket.on("reveal_votes", (roomId: string) => {
@@ -54,7 +54,7 @@ socketServer.on("connection", (socket) => {
   });
 
   socket.on("on_load", (roomId: string) => {
-    socket.to(roomId).emit("update_votes", ROOMS.get(roomId));
+    socket.to(roomId).emit("get_votes", ROOMS.get(roomId));
   });
 });
 
