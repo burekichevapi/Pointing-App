@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
-import { SOCKET } from "../webSocket";
+import { SOCKET } from "../sockets/socket";
 import User from "../models/user";
 import { upsertVote } from "../redux/voteSlice";
+import Communicate from "../sockets/communicate";
 
 const Votes = () => {
   const dispatch = useAppDispatch();
@@ -12,17 +13,14 @@ const Votes = () => {
   );
 
   useEffect(() => {
-    SOCKET.on("get_votes", (updatedVotes: User[]) => {
-      console.log("updated:", updatedVotes);
-      console.log("current:", votes);
+    SOCKET.on(Communicate.UPDATE_VOTES, (updatedVotes: User[]) => {
       if (JSON.stringify(updatedVotes) !== JSON.stringify(votes))
         dispatch(upsertVote(updatedVotes));
     });
-
     SOCKET.emit("on_load", user.roomId);
 
     return () => {
-      SOCKET.off("get_votes");
+      SOCKET.off(Communicate.UPDATE_VOTES);
     };
   }, [dispatch, user.roomId, votes]);
 

@@ -1,25 +1,25 @@
 import { useEffect } from "react";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
 import ButtonGroup from "../components/buttonGroup";
-import { SOCKET } from "../webSocket";
+import { SOCKET } from "../sockets/socket";
 import Votes from "../components/votes";
 import { toggleRevealVotes } from "../redux/voteSlice";
+import Communicate from "../sockets/communicate";
 
 const EstimateRoom = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    SOCKET.on("show_votes", () => dispatch(toggleRevealVotes()));
-    SOCKET.emit("on_load", user.roomId);
+    SOCKET.on(Communicate.SHOW_VOTES, () => dispatch(toggleRevealVotes()));
 
     return () => {
-      SOCKET.off("show_votes");
+      SOCKET.off(Communicate.SHOW_VOTES);
     };
   }, [dispatch, user]);
 
   const handleOnClickReveal = () => {
-    SOCKET.emit("reveal_votes", user.roomId);
+    SOCKET.emit(Communicate.SHOW_VOTES, user.roomId);
     dispatch(toggleRevealVotes());
   };
 

@@ -19,19 +19,36 @@ const socketServer = new Server(httpServer, {
 
 const ROOMS = new Map<string, User[]>();
 
+class Communicate {
+  public static get CREATE_ROOM(): string {
+    return `create_room`;
+  }
+  public static get JOIN_ROOM(): string {
+    return `join_room`;
+  }
+  public static get SHOW_VOTES(): string {
+    return `show_votes`;
+  }
+  public static get SEND_VOTE(): string {
+    return `send_vote`;
+  }
+  public static get UPDATE_VOTES(): string {
+    return `update_votes`;
+  }
+}
+
 socketServer.on("connection", (socket) => {
-  socket.on("create_room", (user: User) => {
+  socket.on(Communicate.CREATE_ROOM, (user: User) => {
     socket.join(user.roomId);
     ROOMS.set(user.roomId, [user]);
 
-    console.log("created:\n", ROOMS.get(user.roomId));
     socket
       .timeout(5000)
       .to(user.roomId)
-      .emit("get_votes", ROOMS.get(user.roomId));
+      .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
   });
 
-  socket.on("join_room", (user: User) => {
+  socket.on(Communicate.JOIN_ROOM, (user: User) => {
     socket.join(user.roomId);
     const users = ROOMS.get(user.roomId);
     if (users === null || users === undefined) return;
@@ -43,11 +60,12 @@ socketServer.on("connection", (socket) => {
     socket
       .timeout(5000)
       .to(user.roomId)
-      .emit("get_votes", ROOMS.get(user.roomId));
+      .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
   });
 
-  socket.on("send_vote", (user: User) => {
+  socket.on(Communicate.SEND_VOTE, (user: User) => {
     const users = ROOMS.get(user.roomId);
+    console.log("vote sent");
     if (users === null || users === undefined) return;
 
     const idx = users.findIndex((u) => u.username === user.username);
@@ -55,20 +73,21 @@ socketServer.on("connection", (socket) => {
 
     ROOMS.set(user.roomId, users);
 
-    console.log("voted:\n", ROOMS.get(user.roomId));
     socket
       .timeout(5000)
       .to(user.roomId)
-      .emit("get_votes", ROOMS.get(user.roomId));
+      .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
   });
 
-  socket.on("reveal_votes", (roomId: string) => {
-    socket.timeout(5000).to(roomId).emit("show_votes");
+  socket.on(Communicate.SHOW_VOTES, (roomId: string) => {
+    socket.timeout(5000).to(roomId).emit(Communicate.SHOW_VOTES);
   });
 
   socket.on("on_load", (roomId: string) => {
-    console.log("loaded:\n", ROOMS.get(roomId));
-    socket.timeout(5000).to(roomId).emit("get_votes", ROOMS.get(roomId));
+    socket
+      .timeout(5000)
+      .to(roomId)
+      .emit(Communicate.UPDATE_VOTES, ROOMS.get(roomId));
   });
 });
 
