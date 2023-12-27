@@ -17,7 +17,7 @@ const Votes = () => {
       if (JSON.stringify(updatedVotes) !== JSON.stringify(votes))
         dispatch(upsertVote(updatedVotes));
     });
-    SOCKET.emit("on_load", user.roomId);
+    SOCKET.emit(Communicate.PAGE_LOAD, user.roomId);
 
     return () => {
       SOCKET.off(Communicate.UPDATE_VOTES);

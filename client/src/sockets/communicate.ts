@@ -14,4 +14,7 @@ export default class Communicate {
   public static get UPDATE_VOTES(): string {
     return `update_votes`;
   }
+  public static get PAGE_LOAD(): string {
+    return `page_load`;
+  }
 }

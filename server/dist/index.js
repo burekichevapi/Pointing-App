@@ -39,10 +39,9 @@ socketServer.on("connection", (socket) => {
             .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
     });
     socket.on(Communicate.JOIN_ROOM, (user) => {
+        console.log("JOIN");
         socket.join(user.roomId);
         const users = ROOMS.get(user.roomId);
-        if (users === null || users === undefined)
-            return;
         users.push(user);
         ROOMS.set(user.roomId, users);
         console.log("joined:\n", ROOMS.get(user.roomId));
@@ -52,10 +51,8 @@ socketServer.on("connection", (socket) => {
             .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
     });
     socket.on(Communicate.SEND_VOTE, (user) => {
+        console.log("SEND");
         const users = ROOMS.get(user.roomId);
-        console.log("vote sent");
-        if (users === null || users === undefined)
-            return;
         const idx = users.findIndex((u) => u.username === user.username);
         users[idx] = user;
         ROOMS.set(user.roomId, users);
@@ -68,6 +65,7 @@ socketServer.on("connection", (socket) => {
         socket.timeout(5000).to(roomId).emit(Communicate.SHOW_VOTES);
     });
     socket.on("on_load", (roomId) => {
+        console.log("LOAD");
         socket
             .timeout(5000)
             .to(roomId)
