@@ -2,7 +2,7 @@ import "./button.css";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
 import { SOCKET } from "../webSocket";
 import { setPoint } from "../redux/userSlice";
-import { useEffect } from "react";
+import User from "../models/user";
 
 interface ButtonGroupProps {
   buttons: Array<number>;
@@ -12,12 +12,10 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
   const user = useAppSelector((state: RootState) => state.user);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (user.point! <= 0) return;
-    SOCKET.emit("send_vote", user);
-  }, [user, user.point]);
-
-  const handleButtonClick = (point: number) => dispatch(setPoint(point));
+  const handleButtonClick = (point: number) => {
+    dispatch(setPoint(point));
+    SOCKET.emit("send_vote", { ...user, point } as User);
+  };
 
   return (
     <div>

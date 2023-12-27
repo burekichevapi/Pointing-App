@@ -10,6 +10,9 @@ const userSlice = createSlice({
     point: 0
   } as User,
   reducers: {
+    setUserId: (state: User, action: PayloadAction<string>) => {
+      state.id = action.payload;
+    },
     setRoomId: (state: User, action: PayloadAction<string>) => {
       state.roomId = action.payload;
     },
@@ -25,7 +28,7 @@ const userSlice = createSlice({
   }
 });
 
-export const { setRoomId, setUsername, toggleIsObserver, setPoint } =
+export const { setUserId, setRoomId, setUsername, toggleIsObserver, setPoint } =
   userSlice.actions;
 
 export default userSlice.reducer;

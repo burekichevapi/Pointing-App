@@ -1,5 +1,5 @@
 import "./App.css";
-import VoteForm from "./pages/voteForm";
+import EstimateRoom from "./pages/estimateRoom";
 import StartForm from "./pages/startForm";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
@@ -10,7 +10,7 @@ const App = () => {
       <div className="App"></div>
       <Routes>
         <Route path="/" element={<StartForm />} />
-        <Route path="/vote" element={<VoteForm />} />
+        <Route path="/vote" element={<EstimateRoom />} />
       </Routes>
     </Router>
   );

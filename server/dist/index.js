@@ -7,17 +7,20 @@ app.use(cors());
 const httpServer = http.createServer(app);
 const socketServer = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.NODE_ENV === "production" ? false : ["http://localhost:5173"],
         methods: ["GET", "POST"]
     }
 });
 const ROOMS = new Map();
 socketServer.on("connection", (socket) => {
-    socket.on("create_room", (data) => {
-        socket.join(data.roomId);
-        data.user.roomId = data.roomId;
-        ROOMS.set(data.roomId, [data.user]);
-        socket.to(data.roomId).emit("get_votes", ROOMS.get(data.roomId));
+    socket.on("create_room", (user) => {
+        socket.join(user.roomId);
+        ROOMS.set(user.roomId, [user]);
+        console.log("created:\n", ROOMS.get(user.roomId));
+        socket
+            .timeout(5000)
+            .to(user.roomId)
+            .emit("get_votes", ROOMS.get(user.roomId));
     });
     socket.on("join_room", (user) => {
         socket.join(user.roomId);
@@ -26,7 +29,11 @@ socketServer.on("connection", (socket) => {
             return;
         users.push(user);
         ROOMS.set(user.roomId, users);
-        socket.to(user.roomId).emit("get_votes", ROOMS.get(user.roomId));
+        console.log("joined:\n", ROOMS.get(user.roomId));
+        socket
+            .timeout(5000)
+            .to(user.roomId)
+            .emit("get_votes", ROOMS.get(user.roomId));
     });
     socket.on("send_vote", (user) => {
         const users = ROOMS.get(user.roomId);
@@ -35,13 +42,18 @@ socketServer.on("connection", (socket) => {
         const idx = users.findIndex((u) => u.username === user.username);
         users[idx] = user;
         ROOMS.set(user.roomId, users);
-        socket.to(user.roomId).emit("get_votes", ROOMS.get(user.roomId));
+        console.log("voted:\n", ROOMS.get(user.roomId));
+        socket
+            .timeout(5000)
+            .to(user.roomId)
+            .emit("get_votes", ROOMS.get(user.roomId));
     });
     socket.on("reveal_votes", (roomId) => {
-        socket.to(roomId).emit("show_votes");
+        socket.timeout(5000).to(roomId).emit("show_votes");
     });
     socket.on("on_load", (roomId) => {
-        socket.to(roomId).emit("get_votes", ROOMS.get(roomId));
+        console.log("loaded:\n", ROOMS.get(roomId));
+        socket.timeout(5000).to(roomId).emit("get_votes", ROOMS.get(roomId));
     });
 });
 httpServer.listen(3000, () => {

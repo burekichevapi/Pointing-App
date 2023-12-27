@@ -1,10 +1,15 @@
-import { setRoomId, setUsername, toggleIsObserver } from "../redux/userSlice";
+import {
+  setRoomId,
+  setUserId,
+  setUsername,
+  toggleIsObserver
+} from "../redux/userSlice";
 import { useAppSelector, RootState, useAppDispatch } from "../redux/store";
 import { SOCKET } from "../webSocket";
 import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { ChangeEvent } from "react";
-import { upsertVote } from "../redux/voteSlice";
 import { useNavigate } from "react-router-dom";
+import User from "../models/user";
 
 const StartForm = () => {
   const dispatch = useAppDispatch();
@@ -18,14 +23,14 @@ const StartForm = () => {
     }
 
     const roomId = uuidV4();
+    const id = uuidV4();
 
     dispatch(setRoomId(roomId));
+    dispatch(setUserId(id));
 
-    dispatch(upsertVote([user]));
-
-    SOCKET.emit("create_room", { roomId, user });
-
-    navigate("/vote");
+    SOCKET.connect();
+    SOCKET.emit("create_room", { ...user, roomId, id } as User);
+    navigate(`/vote`);
   };
 
   const handleJoinRoom = () => {
@@ -38,8 +43,7 @@ const StartForm = () => {
       return;
     }
 
-    dispatch(upsertVote([user]));
-
+    SOCKET.connect();
     SOCKET.emit("join_room", user);
 
     navigate("/vote");
