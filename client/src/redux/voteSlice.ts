@@ -10,12 +10,12 @@ const votesSlice = createSlice({
     upsertVote: (state: VotesState, action: PayloadAction<User[]>) => {
       state.votes = action.payload;
     },
-    toggleRevealVotes: (state: VotesState) => {
+    toggleShowVotes: (state: VotesState) => {
       state.revealVotes = !state.revealVotes;
     }
   }
 });
 
-export const { upsertVote, toggleRevealVotes } = votesSlice.actions;
+export const { upsertVote, toggleShowVotes } = votesSlice.actions;
 
 export default votesSlice.reducer;

@@ -3,7 +3,7 @@ import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
 import ButtonGroup from "../components/buttonGroup";
 import { SOCKET } from "../sockets/socket";
 import Votes from "../components/votes";
-import { toggleRevealVotes } from "../redux/voteSlice";
+import { toggleShowVotes } from "../redux/voteSlice";
 import Communicate from "../sockets/communicate";
 
 const EstimateRoom = () => {
@@ -11,7 +11,7 @@ const EstimateRoom = () => {
   const user = useAppSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    SOCKET.on(Communicate.SHOW_VOTES, () => dispatch(toggleRevealVotes()));
+    SOCKET.on(Communicate.SHOW_VOTES, () => dispatch(toggleShowVotes()));
 
     return () => {
       SOCKET.off(Communicate.SHOW_VOTES);
@@ -20,7 +20,7 @@ const EstimateRoom = () => {
 
   const handleOnClickReveal = () => {
     SOCKET.emit(Communicate.SHOW_VOTES, user.roomId);
-    dispatch(toggleRevealVotes());
+    dispatch(toggleShowVotes());
   };
 
   return (
