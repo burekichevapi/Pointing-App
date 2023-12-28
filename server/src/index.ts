@@ -38,6 +38,9 @@ class Communicate {
   public static get PAGE_LOAD(): string {
     return `page_load`;
   }
+  public static get USER_LEAVE_ROOM(): string {
+    return `user_leave_room`;
+  }
 }
 
 socketServer.on("connection", (socket) => {
@@ -85,6 +88,26 @@ socketServer.on("connection", (socket) => {
       .timeout(5000)
       .to(roomId)
       .emit(Communicate.UPDATE_VOTES, ROOMS.get(roomId));
+  });
+
+  socket.on(Communicate.USER_LEAVE_ROOM, (user: User) => {
+    socket.leave(user.roomId);
+    socket.disconnect();
+
+    const users = ROOMS.get(user.roomId);
+    const updatedUsers = users.filter((u) => u.username !== user.username);
+    ROOMS.set(user.roomId, updatedUsers);
+
+    if (!updatedUsers.length) {
+      ROOMS.delete(user.roomId);
+      socketServer.in(user.roomId).disconnectSockets(true);
+      return;
+    }
+
+    socket
+      .timeout(5000)
+      .to(user.roomId)
+      .emit(Communicate.UPDATE_VOTES, updatedUsers);
   });
 });
 

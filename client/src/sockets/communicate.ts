@@ -17,4 +17,7 @@ export default class Communicate {
   public static get PAGE_LOAD(): string {
     return `page_load`;
   }
+  public static get USER_LEAVE_ROOM(): string {
+    return `user_leave_room`;
+  }
 }

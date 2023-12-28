@@ -11,6 +11,18 @@ const EstimateRoom = () => {
   const user = useAppSelector((state: RootState) => state.user);
 
   useEffect(() => {
+    const handleBeforeUnload = () => {
+      SOCKET.emit(Communicate.USER_LEAVE_ROOM, user);
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [dispatch, user]);
+
+  useEffect(() => {
     SOCKET.on(Communicate.SHOW_VOTES, () => dispatch(toggleShowVotes()));
 
     return () => {
