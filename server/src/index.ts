@@ -19,7 +19,7 @@ const socketServer = new Server(httpServer, {
 
 const ROOMS = new Map<string, User[]>();
 
-class Communicate {
+class Event {
   public static get CREATE_ROOM(): string {
     return `create_room`;
   }
@@ -44,7 +44,7 @@ class Communicate {
 }
 
 socketServer.on("connection", (socket) => {
-  socket.on(Communicate.CREATE_ROOM, (user: User) => {
+  socket.on(Event.CREATE_ROOM, (user: User) => {
     console.log(ROOMS);
     socket.join(user.roomId);
     ROOMS.set(user.roomId, [user]);
@@ -52,10 +52,10 @@ socketServer.on("connection", (socket) => {
     socket
       .timeout(5000)
       .to(user.roomId)
-      .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
+      .emit(Event.UPDATE_VOTES, ROOMS.get(user.roomId));
   });
 
-  socket.on(Communicate.JOIN_ROOM, (user: User) => {
+  socket.on(Event.JOIN_ROOM, (user: User) => {
     socket.join(user.roomId);
     const users = ROOMS.get(user.roomId);
     users.push(user);
@@ -64,10 +64,10 @@ socketServer.on("connection", (socket) => {
     socket
       .timeout(5000)
       .to(user.roomId)
-      .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
+      .emit(Event.UPDATE_VOTES, ROOMS.get(user.roomId));
   });
 
-  socket.on(Communicate.SEND_VOTE, (user: User) => {
+  socket.on(Event.SEND_VOTE, (user: User) => {
     const users = ROOMS.get(user.roomId);
     const idx = users.findIndex((u) => u.username === user.username);
     users[idx] = user;
@@ -77,21 +77,18 @@ socketServer.on("connection", (socket) => {
     socket
       .timeout(5000)
       .to(user.roomId)
-      .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
+      .emit(Event.UPDATE_VOTES, ROOMS.get(user.roomId));
   });
 
-  socket.on(Communicate.SHOW_VOTES, (roomId: string) => {
-    socket.timeout(5000).to(roomId).emit(Communicate.SHOW_VOTES);
+  socket.on(Event.SHOW_VOTES, (roomId: string) => {
+    socket.timeout(5000).to(roomId).emit(Event.SHOW_VOTES);
   });
 
-  socket.on(Communicate.PAGE_LOAD, (roomId: string) => {
-    socket
-      .timeout(5000)
-      .to(roomId)
-      .emit(Communicate.UPDATE_VOTES, ROOMS.get(roomId));
+  socket.on(Event.PAGE_LOAD, (roomId: string) => {
+    socket.timeout(5000).to(roomId).emit(Event.UPDATE_VOTES, ROOMS.get(roomId));
   });
 
-  socket.on(Communicate.USER_LEAVE_ROOM, (user: User) => {
+  socket.on(Event.USER_LEAVE_ROOM, (user: User) => {
     socket.leave(user.roomId);
     socket.disconnect();
 
@@ -105,10 +102,7 @@ socketServer.on("connection", (socket) => {
       return;
     }
 
-    socket
-      .timeout(5000)
-      .to(user.roomId)
-      .emit(Communicate.UPDATE_VOTES, updatedUsers);
+    socket.timeout(5000).to(user.roomId).emit(Event.UPDATE_VOTES, updatedUsers);
   });
 });
 

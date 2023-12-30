@@ -10,7 +10,7 @@ import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import User from "../models/user";
-import Communicate from "../sockets/communicate";
+import Event from "../sockets/communicate";
 
 const StartForm = () => {
   const dispatch = useAppDispatch();
@@ -30,7 +30,7 @@ const StartForm = () => {
     dispatch(setUserId(id));
 
     socket.connect();
-    socket.timeout(5000).emit(Communicate.CREATE_ROOM, {
+    socket.timeout(5000).emit(Event.CREATE_ROOM, {
       ...user,
       roomId,
       id
@@ -47,11 +47,12 @@ const StartForm = () => {
       alert("Invalid room.");
       return;
     }
+
     const id = uuidV4();
     dispatch(setUserId(id));
 
     socket.connect();
-    socket.timeout(5000).emit(Communicate.JOIN_ROOM, { ...user, id } as User);
+    socket.timeout(5000).emit(Event.JOIN_ROOM, { ...user, id } as User);
 
     navigate("/vote");
   };

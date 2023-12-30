@@ -1,4 +1,4 @@
-export default class Communicate {
+export default class Event {
   public static get CREATE_ROOM(): string {
     return `create_room`;
   }

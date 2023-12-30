@@ -3,7 +3,7 @@ import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
 import { socket } from "../sockets/socket";
 import { setPoint } from "../redux/userSlice";
 import User from "../models/user";
-import Communicate from "../sockets/communicate";
+import Event from "../sockets/communicate";
 
 interface ButtonGroupProps {
   buttons: Array<number>;
@@ -15,9 +15,7 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
 
   const handleButtonClick = (point: number) => {
     dispatch(setPoint(point));
-    socket
-      .timeout(5000)
-      .emit(Communicate.SEND_VOTE, { ...user, point } as User);
+    socket.timeout(5000).emit(Event.SEND_VOTE, { ...user, point } as User);
   };
 
   return (

@@ -4,7 +4,7 @@ import ButtonGroup from "../components/buttonGroup";
 import { socket } from "../sockets/socket";
 import Votes from "../components/votes";
 import { toggleShowVotes } from "../redux/voteSlice";
-import Communicate from "../sockets/communicate";
+import Event from "../sockets/communicate";
 
 const EstimateRoom = () => {
   const dispatch = useAppDispatch();
@@ -12,7 +12,7 @@ const EstimateRoom = () => {
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      socket.timeout(5000).emit(Communicate.USER_LEAVE_ROOM, user);
+      socket.timeout(5000).emit(Event.USER_LEAVE_ROOM, user);
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -25,15 +25,15 @@ const EstimateRoom = () => {
   useEffect(() => {
     const onShowVotes = () => dispatch(toggleShowVotes());
 
-    socket.on(Communicate.SHOW_VOTES, onShowVotes);
+    socket.on(Event.SHOW_VOTES, onShowVotes);
 
     return () => {
-      socket.off(Communicate.SHOW_VOTES, onShowVotes);
+      socket.off(Event.SHOW_VOTES, onShowVotes);
     };
   }, [dispatch, user]);
 
   const handleOnClickReveal = () => {
-    socket.timeout(5000).emit(Communicate.SHOW_VOTES, user.roomId);
+    socket.timeout(5000).emit(Event.SHOW_VOTES, user.roomId);
     dispatch(toggleShowVotes());
   };
 
