@@ -30,7 +30,11 @@ const StartForm = () => {
     dispatch(setUserId(id));
 
     SOCKET.connect();
-    SOCKET.emit(Communicate.CREATE_ROOM, { ...user, roomId, id } as User);
+    SOCKET.timeout(5000).emit(Communicate.CREATE_ROOM, {
+      ...user,
+      roomId,
+      id
+    } as User);
     navigate(`/vote`);
   };
 
@@ -45,7 +49,7 @@ const StartForm = () => {
     }
 
     SOCKET.connect();
-    SOCKET.emit(Communicate.JOIN_ROOM, user);
+    SOCKET.timeout(5000).emit(Communicate.JOIN_ROOM, user);
 
     navigate("/vote");
   };

@@ -12,7 +12,7 @@ const EstimateRoom = () => {
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      SOCKET.emit(Communicate.USER_LEAVE_ROOM, user);
+      SOCKET.timeout(5000).emit(Communicate.USER_LEAVE_ROOM, user);
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -23,15 +23,17 @@ const EstimateRoom = () => {
   }, [dispatch, user]);
 
   useEffect(() => {
-    SOCKET.on(Communicate.SHOW_VOTES, () => dispatch(toggleShowVotes()));
+    const onShowVotes = () => dispatch(toggleShowVotes());
+
+    SOCKET.on(Communicate.SHOW_VOTES, onShowVotes);
 
     return () => {
-      SOCKET.off(Communicate.SHOW_VOTES);
+      SOCKET.off(Communicate.SHOW_VOTES, onShowVotes);
     };
   }, [dispatch, user]);
 
   const handleOnClickReveal = () => {
-    SOCKET.emit(Communicate.SHOW_VOTES, user.roomId);
+    SOCKET.timeout(5000).emit(Communicate.SHOW_VOTES, user.roomId);
     dispatch(toggleShowVotes());
   };
 
@@ -44,11 +46,6 @@ const EstimateRoom = () => {
         </div>
       )}
       <button onClick={handleOnClickReveal}>Reveal</button>
-      <div>
-        <label>
-          {user.username}: {user.point}
-        </label>
-      </div>
       <Votes />
     </>
   );

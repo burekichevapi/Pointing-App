@@ -17,7 +17,7 @@ const Votes = () => {
       if (JSON.stringify(updatedVotes) !== JSON.stringify(votes))
         dispatch(upsertVote(updatedVotes));
     });
-    SOCKET.emit(Communicate.PAGE_LOAD, user.roomId);
+    SOCKET.timeout(5000).emit(Communicate.PAGE_LOAD, user.roomId);
 
     return () => {
       SOCKET.off(Communicate.UPDATE_VOTES);
@@ -26,9 +26,14 @@ const Votes = () => {
 
   return (
     <div>
+      <div>
+        <label>
+          {user.username}: {user.point}
+        </label>
+      </div>
       {Array.from(votes).map((voter, index) => {
         return (
-          user.username !== voter.username && (
+          user.id !== voter.id && (
             <div key={index}>
               <label>
                 {voter.username}: {revealVotes && voter.point}

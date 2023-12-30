@@ -36,19 +36,15 @@ class Communicate {
     }
 }
 socketServer.on("connection", (socket) => {
-    console.log("user connect");
     socket.on(Communicate.CREATE_ROOM, (user) => {
         socket.join(user.roomId);
         ROOMS.set(user.roomId, [user]);
-        console.log("created");
-        console.log("Current ROOMS=", ROOMS);
         socket
             .timeout(5000)
             .to(user.roomId)
             .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
     });
     socket.on(Communicate.JOIN_ROOM, (user) => {
-        console.log("joined");
         socket.join(user.roomId);
         const users = ROOMS.get(user.roomId);
         users.push(user);
@@ -59,7 +55,6 @@ socketServer.on("connection", (socket) => {
             .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
     });
     socket.on(Communicate.SEND_VOTE, (user) => {
-        console.log("send vote");
         const users = ROOMS.get(user.roomId);
         const idx = users.findIndex((u) => u.username === user.username);
         users[idx] = user;
@@ -70,27 +65,23 @@ socketServer.on("connection", (socket) => {
             .emit(Communicate.UPDATE_VOTES, ROOMS.get(user.roomId));
     });
     socket.on(Communicate.SHOW_VOTES, (roomId) => {
-        console.log("show votes");
         socket.timeout(5000).to(roomId).emit(Communicate.SHOW_VOTES);
     });
     socket.on(Communicate.PAGE_LOAD, (roomId) => {
-        console.log("page load");
         socket
             .timeout(5000)
             .to(roomId)
             .emit(Communicate.UPDATE_VOTES, ROOMS.get(roomId));
     });
     socket.on(Communicate.USER_LEAVE_ROOM, (user) => {
-        console.log("user leave");
         socket.leave(user.roomId);
         socket.disconnect();
         const users = ROOMS.get(user.roomId);
         const updatedUsers = users.filter((u) => u.username !== user.username);
         ROOMS.set(user.roomId, updatedUsers);
-        console.log("remaining users:", updatedUsers);
         if (!updatedUsers.length) {
             ROOMS.delete(user.roomId);
-            console.log("deleted", user.roomId, ROOMS.get(user.roomId));
+            socketServer.in(user.roomId).disconnectSockets(true);
             return;
         }
         socket
