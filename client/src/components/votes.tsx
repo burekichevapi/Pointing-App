@@ -13,14 +13,16 @@ const Votes = () => {
   );
 
   useEffect(() => {
-    socket.on(Event.UPDATE_VOTES, (updatedVotes: User[]) => {
+    const onUpdateVotes = (updatedVotes: User[]) => {
       if (JSON.stringify(updatedVotes) !== JSON.stringify(votes))
         dispatch(upsertVote(updatedVotes));
-    });
+    };
+
+    socket.on(Event.UPDATE_VOTES, onUpdateVotes);
     socket.timeout(5000).emit(Event.PAGE_LOAD, user.roomId);
 
     return () => {
-      socket.off(Event.UPDATE_VOTES);
+      socket.off(Event.UPDATE_VOTES, onUpdateVotes);
     };
   }, [dispatch, user.roomId, votes]);
 
