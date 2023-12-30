@@ -13,7 +13,6 @@ const EstimateRoom = () => {
   useEffect(() => {
     const handleBeforeUnload = () => {
       socket.timeout(5000).emit(Event.USER_LEAVE_ROOM, user);
-      socket.disconnect();
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);

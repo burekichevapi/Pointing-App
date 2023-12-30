@@ -22,7 +22,6 @@ const ROOMS = new Map<string, User[]>();
 
 socketServer.on("connection", (socket) => {
   socket.on(Event.CREATE_ROOM, (user: User) => {
-    console.log(ROOMS);
     socket.join(user.roomId);
     ROOMS.set(user.roomId, [user]);
 
@@ -67,6 +66,7 @@ socketServer.on("connection", (socket) => {
 
   socket.on(Event.USER_LEAVE_ROOM, (user: User) => {
     socket.leave(user.roomId);
+    socket.disconnect();
 
     const users = ROOMS.get(user.roomId);
     const updatedUsers = users.filter((u) => u.username !== user.username);
@@ -79,10 +79,6 @@ socketServer.on("connection", (socket) => {
     }
 
     socket.timeout(5000).to(user.roomId).emit(Event.UPDATE_VOTES, updatedUsers);
-  });
-
-  socket.on("disconnect", () => {
-    socket.disconnect(true);
   });
 });
 
