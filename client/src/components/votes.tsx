@@ -3,7 +3,7 @@ import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
 import { socket } from "../sockets/socket";
 import User from "../models/user";
 import { upsertVote } from "../redux/voteSlice";
-import Event from "../sockets/communicate";
+import Event from "../sockets/event";
 
 const Votes = () => {
   const dispatch = useAppDispatch();

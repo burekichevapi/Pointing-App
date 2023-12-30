@@ -3,7 +3,7 @@ import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
 import { socket } from "../sockets/socket";
 import { setPoint } from "../redux/userSlice";
 import User from "../models/user";
-import Event from "../sockets/communicate";
+import Event from "../sockets/event";
 
 interface ButtonGroupProps {
   buttons: Array<number>;

@@ -4,7 +4,7 @@ import ButtonGroup from "../components/buttonGroup";
 import { socket } from "../sockets/socket";
 import Votes from "../components/votes";
 import { toggleShowVotes } from "../redux/voteSlice";
-import Event from "../sockets/communicate";
+import Event from "../sockets/event";
 
 const EstimateRoom = () => {
   const dispatch = useAppDispatch();

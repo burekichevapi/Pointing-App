@@ -10,7 +10,7 @@ import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import User from "../models/user";
-import Event from "../sockets/communicate";
+import Event from "../sockets/event";
 
 const StartForm = () => {
   const dispatch = useAppDispatch();

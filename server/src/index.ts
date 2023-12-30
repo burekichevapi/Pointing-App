@@ -110,5 +110,5 @@ httpServer.listen(3000, () => {
   console.log("Running backend on 3000");
 });
 
-socketServer.disconnectSockets();
+socketServer.disconnectSockets(true);
 httpServer.closeAllConnections();
