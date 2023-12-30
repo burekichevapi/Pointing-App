@@ -1,6 +1,6 @@
 import "./button.css";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
-import { SOCKET } from "../sockets/socket";
+import { socket } from "../sockets/socket";
 import { setPoint } from "../redux/userSlice";
 import User from "../models/user";
 import Communicate from "../sockets/communicate";
@@ -15,7 +15,7 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
 
   const handleButtonClick = (point: number) => {
     dispatch(setPoint(point));
-    SOCKET.emit(Communicate.SEND_VOTE, { ...user, point } as User);
+    socket.emit(Communicate.SEND_VOTE, { ...user, point } as User);
   };
 
   return (

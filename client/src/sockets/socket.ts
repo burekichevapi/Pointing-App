@@ -5,7 +5,7 @@ const URL =
     ? window.location.hostname
     : "http://localhost:3000";
 
-export const SOCKET = io(URL, {
+export const socket = io(URL, {
   autoConnect: false,
   transports: ["websocket"]
 });

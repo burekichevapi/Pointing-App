@@ -5,7 +5,7 @@ import {
   toggleIsObserver
 } from "../redux/userSlice";
 import { useAppSelector, RootState, useAppDispatch } from "../redux/store";
-import { SOCKET } from "../sockets/socket";
+import { socket } from "../sockets/socket";
 import { v4 as uuidV4, validate as isValidUuid } from "uuid";
 import { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,8 +29,8 @@ const StartForm = () => {
     dispatch(setRoomId(roomId));
     dispatch(setUserId(id));
 
-    SOCKET.connect();
-    SOCKET.timeout(5000).emit(Communicate.CREATE_ROOM, {
+    socket.connect();
+    socket.timeout(5000).emit(Communicate.CREATE_ROOM, {
       ...user,
       roomId,
       id
@@ -48,8 +48,8 @@ const StartForm = () => {
       return;
     }
 
-    SOCKET.connect();
-    SOCKET.timeout(5000).emit(Communicate.JOIN_ROOM, user);
+    socket.connect();
+    socket.timeout(5000).emit(Communicate.JOIN_ROOM, user);
 
     navigate("/vote");
   };
