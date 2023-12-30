@@ -47,9 +47,11 @@ const StartForm = () => {
       alert("Invalid room.");
       return;
     }
+    const id = uuidV4();
+    dispatch(setUserId(id));
 
     socket.connect();
-    socket.timeout(5000).emit(Communicate.JOIN_ROOM, user);
+    socket.timeout(5000).emit(Communicate.JOIN_ROOM, { ...user, id } as User);
 
     navigate("/vote");
   };

@@ -45,6 +45,7 @@ class Communicate {
 
 socketServer.on("connection", (socket) => {
   socket.on(Communicate.CREATE_ROOM, (user: User) => {
+    console.log(ROOMS);
     socket.join(user.roomId);
     ROOMS.set(user.roomId, [user]);
 

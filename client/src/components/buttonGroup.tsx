@@ -15,7 +15,9 @@ const ButtonGroup = ({ buttons }: ButtonGroupProps) => {
 
   const handleButtonClick = (point: number) => {
     dispatch(setPoint(point));
-    socket.emit(Communicate.SEND_VOTE, { ...user, point } as User);
+    socket
+      .timeout(5000)
+      .emit(Communicate.SEND_VOTE, { ...user, point } as User);
   };
 
   return (
